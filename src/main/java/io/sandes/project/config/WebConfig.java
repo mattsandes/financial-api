@@ -8,20 +8,25 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${cors.originPatterns}")
     private String corsOrigin = "";
 
     @Bean
-    public void addCorsMappings(CorsRegistry registry) {
+    public WebMvcConfigurer corsConfigure() {
+
         var allowedOrigins = corsOrigin.split(",");
 
-        registry
-                .addMapping("/**")
-                .allowedOrigins(allowedOrigins)
-                .allowedMethods("*")
-                .allowCredentials(true);
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedOrigins(allowedOrigins)
+                        .allowedMethods("*")
+                        .allowCredentials(true);
+            }
+        };
     }
 }
